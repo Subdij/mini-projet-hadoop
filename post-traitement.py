@@ -1,11 +1,14 @@
 import sys
 from collections import defaultdict
 import csv
+import matplotlib.pyplot as plt
+import numpy as np
 
 # Structure pour stocker les données: {(année, sexe): [(prénom, nombre), ...]}
 data = defaultdict(list)
 
 output_file = 'resultats.html'
+output_graph = 'prenoms_populaires_par_decennie.png'
 
 # Lire les données d'entrée ligne par ligne
 for line in sys.stdin:
@@ -189,5 +192,103 @@ with open(output_file, 'w', encoding='utf-8') as htmlfile:
 </body>
 </html>''')
 
+# Organiser les données par décennies
+data_by_decade = defaultdict(lambda: defaultdict(int))
+
+for (year, sex), names in data.items():
+    # Calculer la décennie (ex: 1900, 1910, 1920...)
+    decade = int(year) // 10 * 10
+    decade_label = f"{decade}s"
+    
+    for name, count in names:
+        if name:  # Ne pas prendre en compte les valeurs vides
+            data_by_decade[(decade_label, sex)][name] += count
+
+# Trouver le prénom le plus populaire pour chaque décennie et sexe
+top_names_by_decade = {}
+
+# Liste pour garder l'ordre des décennies
+all_decades = sorted(set(decade for (decade, _) in data_by_decade.keys()))
+
+for decade in all_decades:
+    top_names_by_decade[decade] = {}
+    
+    # Pour les garçons (sexe = "1")
+    if (decade, "1") in data_by_decade:
+        boys_names = data_by_decade[(decade, "1")]
+        if boys_names:
+            top_boy_name = max(boys_names.items(), key=lambda x: x[1])
+            top_names_by_decade[decade]["1"] = top_boy_name
+    
+    # Pour les filles (sexe = "2")
+    if (decade, "2") in data_by_decade:
+        girls_names = data_by_decade[(decade, "2")]
+        if girls_names:
+            top_girl_name = max(girls_names.items(), key=lambda x: x[1])
+            top_names_by_decade[decade]["2"] = top_girl_name
+
+# Préparer les données pour le graphique en barres
+decades = []
+top_boys_names = []
+boys_counts = []
+top_girls_names = []
+girls_counts = []
+
+for decade in all_decades:
+    decades.append(decade)
+    
+    # Récupérer le prénom le plus populaire des garçons et son nombre
+    if "1" in top_names_by_decade[decade]:
+        name, count = top_names_by_decade[decade]["1"]
+        top_boys_names.append(name)
+        boys_counts.append(count)
+    else:
+        top_boys_names.append("")
+        boys_counts.append(0)
+    
+    # Récupérer le prénom le plus populaire des filles et son nombre
+    if "2" in top_names_by_decade[decade]:
+        name, count = top_names_by_decade[decade]["2"]
+        top_girls_names.append(name)
+        girls_counts.append(count)
+    else:
+        top_girls_names.append("")
+        girls_counts.append(0)
+
+# Créer le graphique en barres
+plt.figure(figsize=(14, 8))
+
+# Paramètres pour les barres
+x = np.arange(len(decades))
+width = 0.35
+
+# Créer les barres
+bars1 = plt.bar(x - width/2, boys_counts, width, label='Garçons', color='cornflowerblue')
+bars2 = plt.bar(x + width/2, girls_counts, width, label='Filles', color='lightpink')
+
+# Ajouter les étiquettes, le titre et les légendes
+plt.xlabel('Décennie', fontsize=12)
+plt.ylabel('Nombre d\'attributions', fontsize=12)
+plt.title('Prénom le plus populaire par décennie et par sexe', fontsize=16)
+plt.xticks(x, decades)
+plt.legend()
+
+# Ajouter les noms des prénoms au-dessus des barres
+def add_labels(bars, names):
+    for i, (bar, name) in enumerate(zip(bars, names)):
+        height = bar.get_height()
+        plt.text(bar.get_x() + bar.get_width()/2., height + 5,
+                f'{name}', ha='center', va='bottom', rotation=45, fontsize=9)
+
+add_labels(bars1, top_boys_names)
+add_labels(bars2, top_girls_names)
+
+# Ajuster la mise en page
+plt.tight_layout()
+
+# Sauvegarder le graphique
+plt.savefig(output_graph, dpi=300, bbox_inches='tight')
+
 print(f"Les résultats ont été écrits dans le fichier {output_file}")
+print(f"Le graphique des prénoms les plus populaires par décennie a été sauvegardé dans {output_graph}")
 
