@@ -50,8 +50,8 @@ def validate_csv():
                     continue
                 
                 # Vérifier que le département est valide (2 chiffres)
-                if not dept.isdigit() or len(dept) != 2:
-                    continue
+                #if not dept.isdigit() or len(dept) != 2:
+                    #continue
                 
                 # Vérifier que le nombre est un entier positif
                 try:
