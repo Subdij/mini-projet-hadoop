@@ -2,7 +2,7 @@
 
 # 1. Copier access.log dans HDFS
 hdfs dfs -mkdir -p /user/maria_dev/prenoms/logs
-hdfs dfs -put -f nat2022.csv /user/maria_dev/prenoms/logs/
+hdfs dfs -put -f nat2022_valid.csv /user/maria_dev/prenoms/logs/
 
 # 2. Supprimer l’ancien dossier de sortie
 hdfs dfs -rm -r /user/maria_dev/prenoms/logs/output
