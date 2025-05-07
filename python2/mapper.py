@@ -5,10 +5,10 @@ import sys
 
 def mapping():
     try:
-        # Utiliser sys.stdin au lieu d'un fichier spécifique
+        # Utiliser sys.stdin au lieu d'un fichier specifique
         reader = csv.reader(sys.stdin, delimiter=';')
             
-        # Ignorer l'en-tête
+        # Ignorer l'en-tete
         header = next(reader, None)
             
         for row in reader:
