@@ -13,7 +13,7 @@ chmod +x reducer.py
 
 # 4.  Lancer Hadoop Streaming
 hadoop jar /usr/hdp/current/hadoop-mapreduce-client/hadoop-streaming.jar \
--input /user/maria_dev/prenoms/logs/nat2022.csv \
+-input /user/maria_dev/prenoms/logs/nat2022_valid.csv \
 -output /user/maria_dev/prenoms/logs/output \
 -mapper mapper.py \
 -reducer reducer.py \
