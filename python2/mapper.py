@@ -13,7 +13,13 @@ def mapping():
             
         for row in reader:
             sexe, preusuel, annais, dpt, nombre = row
-            key = "{0}_{1}_{2}".format(annais, sexe, preusuel)
+            
+            # Calculer la decennie (ex: pour 1985 -> 1980)
+            decennie = (int(annais) // 10) * 10
+            
+            # Creer la cle avec decennie au lieu de l'annee
+            key = "{0}_{1}_{2}".format(decennie, sexe, preusuel)
+            
             print "{0}\t{1}".format(key, nombre)
             
     except Exception as e:

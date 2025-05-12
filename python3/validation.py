@@ -2,7 +2,7 @@ import csv
 import os
 
 def validate_csv():
-    input_file = 'nat2022.csv'
+    input_file = 'nat2022_v2.csv'
     output_file = 'nat2022_valid.csv'
     
     # Vérifier si le fichier d'entrée existe
